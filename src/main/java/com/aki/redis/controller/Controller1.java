@@ -4,7 +4,6 @@ import com.aki.redis.po.UserRedis;
 import com.aki.redis.service.IRedisGsonService;
 import com.aki.redis.service.serviceimpl.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
