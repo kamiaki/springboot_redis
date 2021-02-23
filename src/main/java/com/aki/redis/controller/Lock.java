@@ -20,7 +20,7 @@ public class Lock {
     private Redisson redisson;
 
     /**
-     * 普通锁
+     * 普通锁  测试这个方法的时候不能用 同一个浏览器 因为同一个地址是串行的会阻塞 用 谷歌和ie一起测试
      *
      * @return
      */
@@ -30,13 +30,13 @@ public class Lock {
         String lockKey = "UDPGetThunderDataSaveToDB";
         String clientId = UUID.randomUUID().toString();
         try {
-            Boolean lockFlag = redisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 1, TimeUnit.SECONDS);
+            Boolean lockFlag = redisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 5, TimeUnit.SECONDS);
             if (!lockFlag) {
                 return "锁住了";
             }
             if (lockFlag) {
                 // 模拟执行了两秒
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -46,34 +46,6 @@ public class Lock {
             }
         }
         return "没锁柱";
-    }
-
-    /**
-     * redisson锁
-     */
-    @RequestMapping("run2")
-    @ResponseBody
-    public String run2() {
-        // 设置锁定资源名称
-        RLock disLock = redisson.getLock("DISLOCK");
-        boolean isLock;
-        try {
-            //  拿到锁的就执行，没拿到锁的就阻塞 超时事件500毫秒
-//            isLock = disLock.lock(500, TimeUnit.MILLISECONDS);
-            //  尝试获取分布式锁 超时事件
-            isLock = disLock.tryLock(15000, 2000, TimeUnit.MILLISECONDS);
-            if (isLock) {
-                // 模拟执行了两秒
-                Thread.sleep(5000);
-            } else {
-                return "没拿到锁";
-            }
-        } catch (Exception e) {
-        } finally {
-            // 无论如何, 最后都要解锁
-            disLock.unlock();
-        }
-        return "拿到锁，执行完了";
     }
 
     /**
@@ -116,4 +88,40 @@ public class Lock {
      *     redLock.unlock();
      * }
      */
+
+    /**
+     * redisson锁  测试这个方法的时候不能用 同一个浏览器 因为同一个地址是串行的会阻塞 用 谷歌和ie一起测试
+     */
+    @RequestMapping("run2")
+    @ResponseBody
+    public String run2() {
+        // 设置锁定资源名称
+        RLock disLock = redisson.getLock("DISLOCK");
+        boolean isLock;
+        try {
+            //  拿到锁的就执行，没拿到锁的就阻塞 获取锁成功之后 设置超时时间5000毫秒
+//            isLock = disLock.lock(5000, TimeUnit.MILLISECONDS);
+            //  尝试获取分布式锁 参数一 有锁阻塞多久 ， 参数二 获取锁成功之后 设置超时时间 15000毫秒
+            isLock = disLock.tryLock(1000, 15000, TimeUnit.MILLISECONDS);
+            if (isLock) {
+                // 模拟执行了两秒
+                Thread.sleep(5000);
+            } else {
+                return "没拿到锁";
+            }
+        } catch (Exception e) {
+            return "没拿到锁";
+        } finally {
+            // 无论如何, 最后都要解锁
+            //两个判断条件是非常必要的 一个是是否有锁，一个是是否是当前线程的锁
+            if (disLock.isLocked()) {
+                if (disLock.isHeldByCurrentThread()) {
+                    disLock.unlock();
+                }
+            }
+        }
+        return "拿到锁，执行完了";
+    }
+
+
 }
