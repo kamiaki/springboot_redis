@@ -3,6 +3,8 @@ package com.aki.redis.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.redisson.Redisson;
+import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -40,5 +42,28 @@ public class RedisConfig {
         template.setHashValueSerializer(jackson2JsonRedisSerializer);
         template.afterPropertiesSet();
         return template;
+    }
+
+    @Bean
+    public Redisson redisson() {
+        // 此为单机模式
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://192.168.80.128:6379").setPassword("462580").setDatabase(0);
+
+//        // 哨兵模式
+//        Config configSB = new Config();
+//        configSB.useSentinelServers().addSentinelAddress(
+//                "redis://172.29.3.245:26378","redis://172.29.3.245:26379", "redis://172.29.3.245:26380")
+//                .setMasterName("mymaster")
+//                .setPassword("a123456").setDatabase(0);
+//
+//        // 集群模式
+//        Config configJQ = new Config();
+//        configJQ.useClusterServers().addNodeAddress(
+//                "redis://172.29.3.245:6375","redis://172.29.3.245:6376", "redis://172.29.3.245:6377",
+//                "redis://172.29.3.245:6378","redis://172.29.3.245:6379", "redis://172.29.3.245:6380")
+//                .setPassword("a123456").setScanInterval(5000);
+
+        return (Redisson) Redisson.create(config);
     }
 }
