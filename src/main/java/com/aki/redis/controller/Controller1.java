@@ -30,8 +30,19 @@ public class Controller1 {
     public String setObj(String key, UserRedis user) {
         try {
             redisUtil.set(key, user);
+            System.out.println("key:" + key);
+            System.out.println("user:" + user.toString());
             Object o = redisUtil.get(key);
-            return o.toString();
+            System.out.println("o:" + o.toString());
+
+            redisUtil.set("ss", "啊啊啊啊");
+            Object ss = redisUtil.get("ss");
+            System.out.println("ss:" + ss.toString());
+
+            redisUtil.set("dd", 13213.1111);
+            Object dd = redisUtil.get("dd");
+            System.out.println("dd:" + dd.toString());
+            return ss.toString() + dd.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "error";
