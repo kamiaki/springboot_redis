@@ -20,6 +20,12 @@
 	</properties>
 
 	<dependencies>
+		<!--redisson-->
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson</artifactId>
+			<version>3.6.5</version>
+		</dependency>
 		<!--redis-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
