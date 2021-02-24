@@ -95,17 +95,22 @@ public class Lock {
     @RequestMapping("run2")
     @ResponseBody
     public String run2() {
+        String method = Thread.currentThread().getStackTrace()[1].getMethodName();
         // 设置锁定资源名称
-        RLock disLock = redisson.getLock("DISLOCK");
+        RLock disLock = redisson.getLock(method);
         boolean isLock;
         try {
-            //  拿到锁的就执行，没拿到锁的就阻塞 获取锁成功之后 设置超时时间5000毫秒
-//            isLock = disLock.lock(5000, TimeUnit.MILLISECONDS);
-            //  尝试获取分布式锁 参数一 有锁阻塞多久 ， 参数二 获取锁成功之后 设置超时时间 15000毫秒
-            isLock = disLock.tryLock(1000, 15000, TimeUnit.MILLISECONDS);
+            // 拿到锁执行 没拿到锁就一直等待          ※※ 锁会一直续命 ※※
+            disLock.lock();
+            // 拿到锁执行 参数1 设置锁过期时间，没拿到锁一直等待
+            disLock.lock(10000, TimeUnit.MILLISECONDS);
+            // 拿到锁执行 参数1 没拿到锁等待时间，没拿到返回false        ※※ 锁会一直续命 ※※
+            isLock = disLock.tryLock(1000, TimeUnit.MILLISECONDS);
+            // 拿到锁执行 参数1 没拿到锁等待时间，参数2 所的过期时间，没拿到返回false
+            isLock = disLock.tryLock(1000,10000, TimeUnit.MILLISECONDS);
             if (isLock) {
                 // 模拟执行了两秒
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             } else {
                 return "没拿到锁";
             }
