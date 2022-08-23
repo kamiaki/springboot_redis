@@ -2,6 +2,7 @@ package com.aki.redis.controller;
 
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,7 @@ public class Lock {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    private Redisson redisson;
+    private RedissonClient redisson;
 
     /**
      * 普通锁  测试这个方法的时候不能用 同一个浏览器 因为同一个地址是串行的会阻塞 用 谷歌和ie一起测试
@@ -101,13 +102,13 @@ public class Lock {
         boolean isLock;
         try {
             // 拿到锁执行 没拿到锁就一直等待          ※※ 锁会一直续命 ※※
-            disLock.lock();
+//            disLock.lock();
             // 拿到锁执行 参数1 设置锁过期时间，没拿到锁一直等待
-            disLock.lock(10000, TimeUnit.MILLISECONDS);
+//            disLock.lock(10000, TimeUnit.MILLISECONDS);
             // 拿到锁执行 参数1 没拿到锁等待时间，没拿到返回false        ※※ 锁会一直续命 ※※
             isLock = disLock.tryLock(1000, TimeUnit.MILLISECONDS);
             // 拿到锁执行 参数1 没拿到锁等待时间，参数2 所的过期时间，没拿到返回false
-            isLock = disLock.tryLock(1000,10000, TimeUnit.MILLISECONDS);
+//            isLock = disLock.tryLock(1000,10000, TimeUnit.MILLISECONDS);
             if (isLock) {
                 // 模拟执行了两秒
                 Thread.sleep(10000);

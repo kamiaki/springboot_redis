@@ -3,10 +3,27 @@ server:
 spring:
   redis:
     database: 0
-    password: 462580
     timeout: 6000
-    port: 6379
+    # 单机
     host: 192.168.80.128
+    port: 6379
+    password: zdax_linktool
+    # 集群配置
+#    cluster:
+#      max-redirects: 3
+#      nodes:
+#        - 192.168.80.128:6379
+#        - 192.168.80.128:6379
+#        - 192.168.80.128:6379
+#        - 192.168.80.128:6379
+#        - 192.168.80.128:6379
+#        - 192.168.80.128:6379
+    # 哨兵
+#    sentinel:
+#      master: mymaster
+#      nodes: 192.168.80.128:6379,192.168.80.128:6379,192.168.80.128:6379
+#      password: zdax_linktool
+    # 线程池
     lettuce:
       pool:
         max-active: 8 # 连接池最大连接数(使用负值表示没有限制) 默认为8

@@ -29,6 +29,9 @@ public class Controller1 {
     @RequestMapping(value = "setObj")
     public String setObj(String key, UserRedis user) {
         try {
+            key = "aaa";
+            user.setId("22222222");
+            user.setName("qwdwqd111");
             redisUtil.set(key, user);
             System.out.println("key:" + key);
             System.out.println("user:" + user.toString());
